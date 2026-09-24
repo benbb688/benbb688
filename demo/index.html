@@ -1,0 +1,633 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>קלייה – בית קלייה שכונתי</title>
+<meta name="description" content="דף נחיתה לדוגמה שנבנה בעזרת הסקיל UI/UX Pro Max">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@500;600;700;800&family=Assistant:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ===== Design tokens (from ui-ux-pro-max --design-system) ===== */
+  :root {
+    --color-primary: #92400E;
+    --color-on-primary: #FFFFFF;
+    --color-secondary: #B45309;
+    --color-background: #FEF3C7;
+    --color-foreground: #78350F;
+    --color-card: #FFFFFF;
+    --color-card-foreground: #78350F;
+    --color-muted-foreground: #6B4A2B;
+    --color-border: #FDE68A;
+    --color-destructive: #B91C1C;
+    --color-success: #166534;
+    --color-ring: #92400E;
+    --color-band: #78350F;
+    --color-on-band: #FEF3C7;
+
+    --space-1: 4px; --space-2: 8px; --space-3: 16px; --space-4: 24px;
+    --space-5: 32px; --space-6: 48px; --space-7: 64px; --space-8: 96px;
+    --radius-sm: 10px; --radius-md: 18px; --radius-lg: 28px;
+    --shadow-1: 0 1px 2px rgba(120,53,15,.08), 0 2px 8px rgba(120,53,15,.06);
+    --shadow-2: 0 8px 24px rgba(120,53,15,.14);
+    --dur-fast: 150ms; --dur-base: 240ms;
+    --ease-out: cubic-bezier(.2,.8,.2,1);
+    --font-display: "Rubik", system-ui, sans-serif;
+    --font-body: "Assistant", system-ui, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --color-primary: #FBBF24;
+      --color-on-primary: #2A1606;
+      --color-secondary: #F59E0B;
+      --color-background: #1A120C;
+      --color-foreground: #FDECC8;
+      --color-card: #2A1D14;
+      --color-card-foreground: #FDECC8;
+      --color-muted-foreground: #D6BFA0;
+      --color-border: #4A3322;
+      --color-destructive: #FCA5A5;
+      --color-success: #86EFAC;
+      --color-ring: #FBBF24;
+      --color-band: #2A1D14;
+      --color-on-band: #FDECC8;
+      --shadow-1: 0 1px 2px rgba(0,0,0,.4);
+      --shadow-2: 0 8px 24px rgba(0,0,0,.5);
+    }
+  }
+  :root[data-theme="dark"] {
+    --color-primary: #FBBF24;
+    --color-on-primary: #2A1606;
+    --color-secondary: #F59E0B;
+    --color-background: #1A120C;
+    --color-foreground: #FDECC8;
+    --color-card: #2A1D14;
+    --color-card-foreground: #FDECC8;
+    --color-muted-foreground: #D6BFA0;
+    --color-border: #4A3322;
+    --color-destructive: #FCA5A5;
+    --color-success: #86EFAC;
+    --color-ring: #FBBF24;
+    --color-band: #2A1D14;
+    --color-on-band: #FDECC8;
+    --shadow-1: 0 1px 2px rgba(0,0,0,.4);
+    --shadow-2: 0 8px 24px rgba(0,0,0,.5);
+  }
+
+  /* ===== Base ===== */
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-body);
+    font-size: 18px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; margin: 0; text-wrap: balance; }
+  p { margin: 0; }
+  a { color: inherit; }
+  img, svg { display: block; }
+  .container { max-width: 1120px; margin-inline: auto; padding-inline: 16px; }
+  @media (min-width: 768px) { .container { padding-inline: 32px; } }
+  .icon { width: 24px; height: 24px; flex: none; stroke: currentColor; fill: none; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+
+  :focus-visible { outline: 3px solid var(--color-ring); outline-offset: 3px; border-radius: 6px; }
+  .skip-link {
+    position: absolute; inset-inline-start: 16px; top: -60px; z-index: 100;
+    background: var(--color-primary); color: var(--color-on-primary);
+    padding: 12px 20px; border-radius: var(--radius-sm); font-weight: 700; text-decoration: none;
+  }
+  .skip-link:focus { top: 12px; }
+
+  /* ===== Buttons ===== */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
+    min-height: 48px; padding: 12px 24px; border-radius: 999px; border: 2px solid transparent;
+    font: 700 17px/1 var(--font-body); text-decoration: none; cursor: pointer;
+    transition: background-color var(--dur-fast) var(--ease-out), color var(--dur-fast), transform var(--dur-fast), box-shadow var(--dur-fast);
+    touch-action: manipulation;
+  }
+  .btn:active { transform: scale(.97); }
+  .btn-primary { background: var(--color-primary); color: var(--color-on-primary); box-shadow: var(--shadow-1); }
+  .btn-primary:hover { background: var(--color-secondary); box-shadow: var(--shadow-2); }
+  .btn-ghost { background: transparent; color: var(--color-foreground); border-color: currentColor; }
+  .btn-ghost:hover { background: color-mix(in srgb, var(--color-foreground) 8%, transparent); }
+  .btn[disabled] { opacity: .5; cursor: not-allowed; }
+
+  /* ===== Header ===== */
+  header.site {
+    position: sticky; top: 0; z-index: 40;
+    background: color-mix(in srgb, var(--color-background) 88%, transparent);
+    backdrop-filter: saturate(1.4) blur(10px);
+    border-bottom: 1px solid var(--color-border);
+  }
+  .nav { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); min-height: 68px; }
+  .brand { display: flex; align-items: center; gap: var(--space-2); font: 800 24px var(--font-display); text-decoration: none; }
+  .brand-mark { width: 40px; height: 40px; border-radius: 12px; background: var(--color-primary); color: var(--color-on-primary); display: grid; place-items: center; }
+  .nav-links { display: none; gap: var(--space-4); list-style: none; margin: 0; padding: 0; }
+  .nav-links a { text-decoration: none; font-weight: 600; padding: 10px 4px; }
+  .nav-links a:hover { text-decoration: underline; text-underline-offset: 6px; }
+  @media (min-width: 900px) { .nav-links { display: flex; } }
+  .nav-actions { display: flex; align-items: center; gap: var(--space-2); }
+  .icon-btn {
+    width: 48px; height: 48px; display: grid; place-items: center; border-radius: 999px;
+    border: 1px solid var(--color-border); background: var(--color-card); color: var(--color-foreground); cursor: pointer;
+    transition: background-color var(--dur-fast);
+  }
+  .icon-btn:hover { background: var(--color-border); }
+  .theme-icon-dark { display: none; }
+  [data-theme-effective="dark"] .theme-icon-dark { display: block; }
+  [data-theme-effective="dark"] .theme-icon-light { display: none; }
+  .nav-cta { display: none; }
+  @media (min-width: 560px) { .nav-cta { display: inline-flex; } }
+
+  /* ===== Hero ===== */
+  .hero { padding-block: var(--space-7) var(--space-8); position: relative; overflow: hidden; }
+  .hero-grid { display: grid; gap: var(--space-6); align-items: center; }
+  @media (min-width: 900px) { .hero-grid { grid-template-columns: 1.1fr .9fr; } }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: var(--space-2);
+    padding: 6px 14px; border-radius: 999px; background: var(--color-card); border: 1px solid var(--color-border);
+    font-weight: 700; font-size: 15px; margin-bottom: var(--space-4);
+  }
+  .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--color-success); }
+  .hero h1 { font-size: clamp(40px, 7vw, 76px); font-weight: 800; letter-spacing: -.01em; }
+  .hero h1 em { font-style: normal; color: var(--color-primary); }
+  .hero .lead { font-size: 20px; margin-top: var(--space-4); max-width: 34ch; color: var(--color-muted-foreground); }
+  .hero-ctas { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-5); }
+  .hero-stats { display: flex; flex-wrap: wrap; gap: var(--space-5); margin-top: var(--space-6); }
+  .stat b { display: block; font: 800 32px var(--font-display); font-variant-numeric: tabular-nums; }
+  .stat span { font-size: 15px; color: var(--color-muted-foreground); }
+
+  .hero-art {
+    aspect-ratio: 1 / 1; border-radius: var(--radius-lg); position: relative;
+    background: var(--color-band); color: var(--color-on-band); overflow: hidden; box-shadow: var(--shadow-2);
+    display: grid; place-items: center;
+  }
+  .hero-art .ring { position: absolute; border-radius: 50%; border: 2px dashed color-mix(in srgb, var(--color-on-band) 30%, transparent); }
+  .hero-art .ring.r1 { width: 80%; height: 80%; animation: spin 40s linear infinite; }
+  .hero-art .ring.r2 { width: 55%; height: 55%; animation: spin 28s linear infinite reverse; }
+  .hero-art .cup { width: 44%; height: auto; color: var(--color-primary); }
+  .hero-art .badge {
+    position: absolute; inset-block-end: 24px; inset-inline-start: 24px;
+    background: var(--color-card); color: var(--color-card-foreground); border-radius: var(--radius-md);
+    padding: 12px 16px; box-shadow: var(--shadow-2); display: flex; gap: var(--space-2); align-items: center; font-weight: 700;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ===== Sections ===== */
+  section { scroll-margin-top: 80px; }
+  .section { padding-block: var(--space-8); }
+  .section-head { max-width: 640px; margin-bottom: var(--space-6); }
+  .section-head .kicker { font-weight: 700; color: var(--color-primary); font-size: 15px; letter-spacing: .02em; }
+  .section-head h2 { font-size: clamp(30px, 4.5vw, 48px); margin-top: var(--space-2); }
+  .section-head p { margin-top: var(--space-3); color: var(--color-muted-foreground); }
+
+  /* Steps (funnel pattern) */
+  .steps { display: grid; gap: var(--space-4); counter-reset: step; list-style: none; padding: 0; margin: 0; }
+  @media (min-width: 768px) { .steps { grid-template-columns: repeat(3, 1fr); } }
+  .step {
+    background: var(--color-card); color: var(--color-card-foreground); border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg); padding: var(--space-5); position: relative; box-shadow: var(--shadow-1);
+  }
+  .step-num {
+    width: 48px; height: 48px; border-radius: 14px; display: grid; place-items: center;
+    background: var(--color-primary); color: var(--color-on-primary); font: 800 22px var(--font-display); margin-bottom: var(--space-4);
+  }
+  .step h3 { font-size: 24px; margin-bottom: var(--space-2); }
+  .step p { color: var(--color-muted-foreground); }
+
+  /* Menu */
+  .band { background: var(--color-band); color: var(--color-on-band); border-radius: var(--radius-lg); }
+  .band .section-head p, .band .section-head .kicker { color: color-mix(in srgb, var(--color-on-band) 80%, transparent); }
+  .band .section-head .kicker { color: var(--color-border); }
+  :root[data-theme-effective="dark"] .band .section-head .kicker { color: var(--color-primary); }
+  .menu { display: grid; gap: var(--space-3); }
+  @media (min-width: 640px) { .menu { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1000px) { .menu { grid-template-columns: repeat(4, 1fr); } }
+  .menu-card {
+    background: var(--color-card); color: var(--color-card-foreground); border-radius: var(--radius-md);
+    padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-2);
+    transition: transform var(--dur-base) var(--ease-out), box-shadow var(--dur-base);
+  }
+  .menu-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-2); }
+  .menu-card .icon { width: 32px; height: 32px; color: var(--color-primary); }
+  .menu-card h3 { font-size: 21px; }
+  .menu-card p { font-size: 16px; color: var(--color-muted-foreground); flex: 1; }
+  .price { font: 700 20px var(--font-display); font-variant-numeric: tabular-nums; }
+  .tag { display: inline-block; align-self: flex-start; font-size: 13px; font-weight: 700; padding: 3px 10px; border-radius: 999px; background: var(--color-background); border: 1px solid var(--color-border); }
+
+  /* Hours + form */
+  .split { display: grid; gap: var(--space-5); }
+  @media (min-width: 900px) { .split { grid-template-columns: 1fr 1fr; } }
+  .panel { background: var(--color-card); color: var(--color-card-foreground); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-5); box-shadow: var(--shadow-1); }
+  .panel h3 { font-size: 26px; margin-bottom: var(--space-4); display: flex; gap: var(--space-2); align-items: center; }
+  .hours { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+  .hours th, .hours td { text-align: start; padding: 12px 0; border-bottom: 1px solid var(--color-border); }
+  .hours th { font-weight: 600; }
+  .hours td { direction: ltr; unicode-bidi: isolate; text-align: left; }
+  .hours tr.today th, .hours tr.today td { font-weight: 800; color: var(--color-primary); }
+  .today-label { font-size: 13px; margin-inline-start: 8px; padding: 2px 8px; border-radius: 999px; background: var(--color-primary); color: var(--color-on-primary); }
+  .address { display: flex; gap: var(--space-2); margin-top: var(--space-4); color: var(--color-muted-foreground); }
+
+  .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: var(--space-3); }
+  .field label { font-weight: 700; }
+  .req { color: var(--color-destructive); }
+  .field input, .field select {
+    min-height: 48px; padding: 10px 14px; border-radius: var(--radius-sm); border: 2px solid var(--color-border);
+    background: var(--color-background); color: var(--color-foreground); font: 500 17px var(--font-body);
+    transition: border-color var(--dur-fast);
+  }
+  .field input:hover, .field select:hover { border-color: var(--color-secondary); }
+  .field input:focus-visible, .field select:focus-visible { outline: 3px solid var(--color-ring); outline-offset: 1px; border-color: var(--color-ring); }
+  .field .hint { font-size: 15px; color: var(--color-muted-foreground); }
+  .field .error { font-size: 15px; font-weight: 600; color: var(--color-destructive); display: none; gap: 6px; align-items: center; }
+  .field.invalid input { border-color: var(--color-destructive); }
+  .field.invalid .error { display: flex; }
+  .field.invalid .hint { display: none; }
+  .form-status { margin-top: var(--space-3); font-weight: 700; display: flex; gap: var(--space-2); align-items: center; min-height: 28px; color: var(--color-success); }
+  .spinner { width: 18px; height: 18px; border-radius: 50%; border: 3px solid currentColor; border-inline-end-color: transparent; animation: spin .8s linear infinite; display: none; }
+  .btn.loading .spinner { display: inline-block; }
+
+  /* Behind the scenes */
+  .bts { display: grid; gap: var(--space-4); }
+  @media (min-width: 900px) { .bts { grid-template-columns: repeat(3, 1fr); } }
+  .bts .panel h3 { font-size: 20px; }
+  .swatches { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-2); }
+  .swatch { border-radius: var(--radius-sm); overflow: hidden; border: 1px solid var(--color-border); font-size: 13px; }
+  .swatch i { display: block; height: 48px; }
+  .swatch span { display: block; padding: 6px 8px; font-family: ui-monospace, monospace; direction: ltr; text-align: left; }
+  .font-sample { border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: var(--space-3); margin-bottom: var(--space-2); }
+  .font-sample .big { font: 800 30px var(--font-display); }
+  .font-sample small { display: block; color: var(--color-muted-foreground); font-size: 14px; }
+  .checks { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+  .checks li { display: flex; gap: var(--space-2); align-items: flex-start; font-size: 16px; }
+  .checks .icon { width: 22px; height: 22px; color: var(--color-success); margin-top: 2px; }
+
+  footer { padding-block: var(--space-6); border-top: 1px solid var(--color-border); color: var(--color-muted-foreground); font-size: 15px; }
+  footer .container { display: flex; flex-wrap: wrap; gap: var(--space-3); justify-content: space-between; }
+
+  /* Reveal on scroll */
+  .reveal { opacity: 0; transform: translateY(16px); transition: opacity 500ms var(--ease-out), transform 500ms var(--ease-out); }
+  .reveal.in { opacity: 1; transform: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .reveal { opacity: 1; transform: none; }
+  }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">דלג לתוכן הראשי</a>
+
+<!-- Icon sprite (Lucide-style strokes, one family, 1.75 stroke) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-coffee" viewBox="0 0 24 24"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><path d="M6 2v2M10 2v2M14 2v2"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></symbol>
+  <symbol id="i-bean" viewBox="0 0 24 24"><path d="M10.2 18H4.8a2 2 0 0 1-1.7-3l5.1-8.9a2 2 0 0 1 3.5 0l5.1 8.9a2 2 0 0 1-1.7 3h-5"/><path d="M12 2v2"/></symbol>
+  <symbol id="i-flame" viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5Z"/></symbol>
+  <symbol id="i-truck" viewBox="0 0 24 24"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2M15 18H9M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.62l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></symbol>
+  <symbol id="i-cup-hot" viewBox="0 0 24 24"><path d="M2 21h18M5 11h14v3a6 6 0 0 1-6 6h-2a6 6 0 0 1-6-6Z"/><path d="M19 12h1a2 2 0 0 1 0 4h-1"/><path d="M9 3c0 1.5-1 1.5-1 3M13 3c0 1.5-1 1.5-1 3"/></symbol>
+  <symbol id="i-snow" viewBox="0 0 24 24"><path d="M2 12h20M12 2v20M20 16l-4-4 4-4M4 8l4 4-4 4M16 4l-4 4-4-4M8 20l4-4 4 4"/></symbol>
+  <symbol id="i-croissant" viewBox="0 0 24 24"><path d="m4.6 13.11 5.79-3.21c1.89-1.05 4.79 1.78 3.71 3.71l-3.22 5.81C8.8 23.16.79 15.23 4.6 13.11Z"/><path d="m10.5 9.5-1-2.29C9.2 6.48 8.8 6 8 6H4.5C2.79 6 2 6.5 2 8.5a7.71 7.71 0 0 0 2 4.83"/><path d="M8 6c0-1.55.24-4-2-4-2 0-2.5 2.17-2.5 4M14.5 13.5l2.29 1c.73.3 1.21.7 1.21 1.5v3.5c0 1.71-.5 2.5-2.5 2.5a7.71 7.71 0 0 1-4.83-2"/><path d="M18 16c1.55 0 4-.24 4 2 0 2-2.17 2.5-4 2.5"/></symbol>
+  <symbol id="i-bag" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></symbol>
+</svg>
+
+<header class="site">
+  <div class="container nav">
+    <a class="brand" href="#top" aria-label="קלייה – לראש העמוד">
+      <span class="brand-mark"><svg class="icon" aria-hidden="true"><use href="#i-coffee"/></svg></span>
+      קלייה
+    </a>
+    <nav aria-label="ניווט ראשי">
+      <ul class="nav-links">
+        <li><a href="#how">איך זה עובד</a></li>
+        <li><a href="#menu">תפריט</a></li>
+        <li><a href="#visit">שעות וכתובת</a></li>
+        <li><a href="#design">מאחורי העיצוב</a></li>
+      </ul>
+    </nav>
+    <div class="nav-actions">
+      <button class="icon-btn" id="themeToggle" type="button" aria-label="החלפת מצב כהה" aria-pressed="false">
+        <svg class="icon theme-icon-light" aria-hidden="true"><use href="#i-moon"/></svg>
+        <svg class="icon theme-icon-dark" aria-hidden="true"><use href="#i-sun"/></svg>
+      </button>
+      <a class="btn btn-primary nav-cta" href="#order">להזמנה</a>
+    </div>
+  </div>
+</header>
+
+<main id="main" tabindex="-1">
+  <!-- Hero -->
+  <section class="hero" id="top">
+    <div class="container hero-grid">
+      <div>
+        <span class="eyebrow"><span class="dot" aria-hidden="true"></span>פתוח עכשיו · עד 20:00</span>
+        <h1>קפה שנקלה <em>הבוקר</em>,<br>ממש מעבר לפינה.</h1>
+        <p class="lead">בית קלייה שכונתי קטן. פולים טריים מחוות קטנות, קלייה במקום, ומשלוח עד הבית תוך 24 שעות.</p>
+        <div class="hero-ctas">
+          <a class="btn btn-primary" href="#order">
+            להזמין שקית פולים
+            <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg>
+          </a>
+          <a class="btn btn-ghost" href="#menu">לתפריט הבר</a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat"><b>12</b><span>זנים מקוליים</span></div>
+          <div class="stat"><b>48 ש׳</b><span>מהקלייה לכוס</span></div>
+          <div class="stat"><b>4.9</b><span>דירוג ממוצע</span></div>
+        </div>
+      </div>
+      <div class="hero-art" role="img" aria-label="איור של כוס קפה חמה">
+        <span class="ring r1" aria-hidden="true"></span>
+        <span class="ring r2" aria-hidden="true"></span>
+        <svg class="icon cup" viewBox="0 0 24 24" aria-hidden="true" style="stroke-width:1.2"><use href="#i-cup-hot"/></svg>
+        <div class="badge"><svg class="icon" aria-hidden="true" style="color:var(--color-primary)"><use href="#i-star"/></svg>נקלה היום ב־07:30</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works: 3-step funnel -->
+  <section class="section" id="how" aria-labelledby="how-title">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="kicker">שלושה צעדים</span>
+        <h2 id="how-title">מהחווה אליך, בלי קיצורי דרך</h2>
+        <p>בחרנו בתבנית "משפך בשלושה שלבים": כל שלב מציג רק את מה שצריך כדי להתקדם לשלב הבא.</p>
+      </div>
+      <ol class="steps">
+        <li class="step reveal">
+          <div class="step-num" aria-hidden="true">1</div>
+          <h3>בוחרים פולים</h3>
+          <p>אתיופיה פירותית, ברזיל שוקולדית או תערובת הבית. לכל זן יש כרטיס טעמים ברור.</p>
+        </li>
+        <li class="step reveal">
+          <div class="step-num" aria-hidden="true">2</div>
+          <h3>אנחנו קולים</h3>
+          <p>קלייה בהזמנה אישית: בהירה, בינונית או כהה. מקבלים הודעה כשהשקית יוצאת מהמקלה.</p>
+        </li>
+        <li class="step reveal">
+          <div class="step-num" aria-hidden="true">3</div>
+          <h3>מקבלים הביתה</h3>
+          <p>משלוח תוך 24 שעות, או איסוף עצמי מהבר עם אספרסו על חשבוננו.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- Menu -->
+  <section id="menu" aria-labelledby="menu-title">
+    <div class="container">
+      <div class="band section" style="padding-inline: clamp(16px, 4vw, 48px);">
+        <div class="section-head reveal">
+          <span class="kicker">בבר</span>
+          <h2 id="menu-title">מה שותים היום</h2>
+          <p>מחירים גלויים ומספרים באותו רוחב, כך שהעמודה לא "קופצת".</p>
+        </div>
+        <div class="menu">
+          <article class="menu-card reveal">
+            <svg class="icon" aria-hidden="true"><use href="#i-coffee"/></svg>
+            <h3>אספרסו כפול</h3>
+            <p>הזן של השבוע, 18 גרם, מיצוי של 28 שניות.</p>
+            <span class="price">₪12</span>
+          </article>
+          <article class="menu-card reveal">
+            <svg class="icon" aria-hidden="true"><use href="#i-cup-hot"/></svg>
+            <h3>פילטר V60</h3>
+            <p>חליטה ידנית שמבליטה את הטעמים של כל זן.</p>
+            <span class="tag">מומלץ</span>
+            <span class="price">₪16</span>
+          </article>
+          <article class="menu-card reveal">
+            <svg class="icon" aria-hidden="true"><use href="#i-snow"/></svg>
+            <h3>קולד ברו</h3>
+            <p>השרייה של 18 שעות. חלק, מתוק טבעית, בלי חומציות.</p>
+            <span class="price">₪18</span>
+          </article>
+          <article class="menu-card reveal">
+            <svg class="icon" aria-hidden="true"><use href="#i-croissant"/></svg>
+            <h3>קרואסון חמאה</h3>
+            <p>מהמאפייה של השכונה, נאפה כל בוקר ב־06:00.</p>
+            <span class="price">₪14</span>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Hours + Order -->
+  <section class="section" id="visit" aria-labelledby="visit-title">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="kicker">בואו לבקר</span>
+        <h2 id="visit-title">שעות פתיחה, בלי לחפש</h2>
+        <p>הסקיל סימן "שעות מוסתרות" כטעות נפוצה באתרי בתי קפה, אז הן כאן, גלויות, והיום מודגש.</p>
+      </div>
+      <div class="split">
+        <div class="panel reveal">
+          <h3><svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg>שעות פתיחה</h3>
+          <table class="hours" id="hours">
+            <caption class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">שעות פתיחה לפי ימים</caption>
+            <tbody>
+              <tr data-day="0"><th scope="row">ראשון</th><td>07:00–20:00</td></tr>
+              <tr data-day="1"><th scope="row">שני</th><td>07:00–20:00</td></tr>
+              <tr data-day="2"><th scope="row">שלישי</th><td>07:00–20:00</td></tr>
+              <tr data-day="3"><th scope="row">רביעי</th><td>07:00–20:00</td></tr>
+              <tr data-day="4"><th scope="row">חמישי</th><td>07:00–22:00</td></tr>
+              <tr data-day="5"><th scope="row">שישי</th><td>07:00–15:00</td></tr>
+              <tr data-day="6"><th scope="row">שבת</th><td>סגור</td></tr>
+            </tbody>
+          </table>
+          <p class="address"><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg>רחוב הדוגמה 12, תל אביב (כתובת לדוגמה)</p>
+        </div>
+
+        <div class="panel reveal" id="order">
+          <h3><svg class="icon" aria-hidden="true"><use href="#i-bag"/></svg>הזמנת פולים</h3>
+          <form id="orderForm" novalidate>
+            <div class="field">
+              <label for="name">שם מלא <span class="req" aria-hidden="true">*</span></label>
+              <input id="name" name="name" type="text" autocomplete="name" required aria-describedby="name-hint name-err">
+              <span class="hint" id="name-hint">איך לכתוב על השקית?</span>
+              <span class="error" id="name-err"><svg class="icon" aria-hidden="true" style="width:18px;height:18px"><use href="#i-alert"/></svg>צריך שם של לפחות 2 אותיות.</span>
+            </div>
+            <div class="field">
+              <label for="phone">טלפון <span class="req" aria-hidden="true">*</span></label>
+              <input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" dir="ltr" style="text-align:right" required aria-describedby="phone-hint phone-err">
+              <span class="hint" id="phone-hint">נשלח SMS כשהשקית יוצאת מהמקלה.</span>
+              <span class="error" id="phone-err"><svg class="icon" aria-hidden="true" style="width:18px;height:18px"><use href="#i-alert"/></svg>מספר לא תקין. לדוגמה: 050-1234567</span>
+            </div>
+            <div class="field">
+              <label for="roast">דרגת קלייה</label>
+              <select id="roast" name="roast">
+                <option>בהירה – פירותית</option>
+                <option selected>בינונית – מאוזנת</option>
+                <option>כהה – שוקולדית</option>
+              </select>
+            </div>
+            <button class="btn btn-primary" type="submit" id="submitBtn" style="width:100%">
+              <span class="spinner" aria-hidden="true"></span>
+              <span class="label">שליחת הזמנה</span>
+            </button>
+            <p class="form-status" id="formStatus" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Behind the design -->
+  <section class="section" id="design" aria-labelledby="design-title" style="padding-top:0">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="kicker">מאחורי העיצוב</span>
+        <h2 id="design-title">מה הסקיל החליט כאן</h2>
+        <p>הרצתי את הפקודה <code dir="ltr">search.py "specialty coffee roastery cafe warm" --design-system</code>, וזה מה שהיא החזירה ושימש לבניית הדף.</p>
+      </div>
+      <div class="bts">
+        <div class="panel reveal">
+          <h3>פלטת צבעים</h3>
+          <div class="swatches">
+            <div class="swatch"><i style="background:#92400E"></i><span>Primary</span></div>
+            <div class="swatch"><i style="background:#B45309"></i><span>Secondary</span></div>
+            <div class="swatch"><i style="background:#78350F"></i><span>Foreground</span></div>
+            <div class="swatch"><i style="background:#FEF3C7"></i><span>Background</span></div>
+            <div class="swatch"><i style="background:#FDE68A"></i><span>Border</span></div>
+            <div class="swatch"><i style="background:#FFFFFF"></i><span>Card</span></div>
+          </div>
+          <p style="margin-top:12px;font-size:15px;color:var(--color-muted-foreground)">חום חם ושמנת. במצב כהה הצבעים עוברים לגוונים בהירים יותר, ולא סתם מתהפכים.</p>
+        </div>
+        <div class="panel reveal">
+          <h3>טיפוגרפיה</h3>
+          <div class="font-sample"><div class="big">Rubik</div><small>כותרות · עגול וידידותי</small></div>
+          <div class="font-sample"><div style="font-size:22px;font-weight:600">Assistant</div><small>טקסט רץ · 18px, גובה שורה 1.6</small></div>
+          <p style="font-size:15px;color:var(--color-muted-foreground)">הסקיל הציע Fredoka/Nunito, אבל אין להם עברית, אז חיפשתי במאגר הפונטים שלו חלופה עם אותו אופי.</p>
+        </div>
+        <div class="panel reveal">
+          <h3>כללי UX שיושמו</h3>
+          <ul class="checks">
+            <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>ניגודיות של 4.5:1 לפחות, בשני המצבים</li>
+            <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>אייקוני SVG ממשפחה אחת, בלי אימוג׳י</li>
+            <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>כפתורים בגובה 48px לפחות, עם פוקוס גלוי</li>
+            <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>שגיאה ליד השדה, בדיקה ביציאה מהשדה</li>
+            <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>כיבוד הגדרת "הפחתת תנועה" של המכשיר</li>
+            <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>קישור "דלג לתוכן" למשתמשי מקלדת</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="container">
+    <span>© קלייה · עסק דמיוני, לצורך הדגמה בלבד</span>
+    <span>נבנה עם הסקיל UI/UX Pro Max</span>
+  </div>
+</footer>
+
+<script>
+  // Theme toggle (remembered per viewer, safe if storage is blocked)
+  (function () {
+    const root = document.documentElement;
+    const btn = document.getElementById('themeToggle');
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    let saved = null;
+    try { saved = localStorage.getItem('kalia-theme'); } catch (e) {}
+    if (saved) root.setAttribute('data-theme', saved);
+    function effective() { return root.getAttribute('data-theme') || (mq.matches ? 'dark' : 'light'); }
+    function sync() {
+      const t = effective();
+      root.setAttribute('data-theme-effective', t);
+      btn.setAttribute('aria-pressed', String(t === 'dark'));
+      btn.setAttribute('aria-label', t === 'dark' ? 'מעבר למצב בהיר' : 'מעבר למצב כהה');
+    }
+    btn.addEventListener('click', function () {
+      const next = effective() === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      try { localStorage.setItem('kalia-theme', next); } catch (e) {}
+      sync();
+    });
+    mq.addEventListener('change', sync);
+    sync();
+  })();
+
+  // Highlight today in the hours table
+  (function () {
+    const row = document.querySelector('#hours tr[data-day="' + new Date().getDay() + '"]');
+    if (!row) return;
+    row.classList.add('today');
+    const th = row.querySelector('th');
+    const tag = document.createElement('span');
+    tag.className = 'today-label';
+    tag.textContent = 'היום';
+    th.appendChild(tag);
+  })();
+
+  // Reveal on scroll
+  (function () {
+    const els = document.querySelectorAll('.reveal');
+    if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      els.forEach(el => el.classList.add('in'));
+      return;
+    }
+    const io = new IntersectionObserver(entries => {
+      entries.forEach((e, i) => {
+        if (e.isIntersecting) {
+          setTimeout(() => e.target.classList.add('in'), i * 40);
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    els.forEach(el => io.observe(el));
+  })();
+
+  // Form: validate on blur, loading state, success feedback
+  (function () {
+    const form = document.getElementById('orderForm');
+    const status = document.getElementById('formStatus');
+    const btn = document.getElementById('submitBtn');
+    const rules = {
+      name: v => v.trim().length >= 2,
+      phone: v => /^0\d{1,2}-?\d{7}$/.test(v.replace(/\s/g, ''))
+    };
+    function check(input) {
+      const ok = rules[input.name](input.value);
+      input.closest('.field').classList.toggle('invalid', !ok);
+      input.setAttribute('aria-invalid', String(!ok));
+      return ok;
+    }
+    Object.keys(rules).forEach(n => {
+      const input = form.elements[n];
+      input.addEventListener('blur', () => { if (input.value) check(input); });
+      input.addEventListener('input', () => { if (input.closest('.field').classList.contains('invalid')) check(input); });
+    });
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      status.textContent = '';
+      const invalid = Object.keys(rules).map(n => form.elements[n]).filter(i => !check(i));
+      if (invalid.length) { invalid[0].focus(); return; }
+      btn.disabled = true; btn.classList.add('loading');
+      btn.querySelector('.label').textContent = 'שולח…';
+      setTimeout(() => {
+        btn.disabled = false; btn.classList.remove('loading');
+        btn.querySelector('.label').textContent = 'שליחת הזמנה';
+        status.textContent = 'ההזמנה התקבלה (הדגמה). נשלח לך SMS כשהשקית תצא מהמקלה.';
+        form.reset();
+      }, 1200);
+    });
+  })();
+</script>
+</body>
+</html>
